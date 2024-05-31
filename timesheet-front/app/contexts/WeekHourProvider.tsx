@@ -10,34 +10,32 @@ import { BACKEND_URL } from "../lib/Constants";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 
-// export const ProjectContext = createContext<Project[]>([]);
-interface ProjectContextType {
-  projects: Project[];
-  fetchProjects: () => void;
+interface WeekHoursContextType {
+  weekHours: WeekHours[];
+  fetchWeekHours: () => void;
 }
-export const ProjectContext = createContext<ProjectContextType>({
-  projects: [],
-  fetchProjects: () => {},
+export const WeekHourContext = createContext<WeekHoursContextType>({
+  weekHours: [],
+  fetchWeekHours: () => {},
 });
 
-export interface Project {
+export interface WeekHours {
   _id: string;
-  name: string;
-  description: string;
-  type: string;
+  week: string;
+  hours: string;
 }
 
-export const ProjectProvider = ({ children }: PropsWithChildren) => {
-  const [projects, setProjects] = useState<Project[]>([]);
+export const WeekHourProvider = ({ children }: PropsWithChildren) => {
+  const [weekHours, setWeekHours] = useState<WeekHours[]>([]);
   const { status, data: session } = useSession();
   const [axiosError, setAxiosError] = useState<AxiosError | null>(null);
 
-  const fetchProjects = async () => {
+  const fetchWeekHours = async () => {
     try {
-      const response = await axios.get(BACKEND_URL + "/project", {
+      const response = await axios.get(BACKEND_URL + "/hours", {
         headers: { Authorization: `Bearer ${session?.backendToken.accessKey}` },
       });
-      setProjects(response.data);
+      setWeekHours(response.data);
     } catch (error: AxiosError | any) {
       if (error.response) {
         if (error.response.status === 401) {
@@ -49,13 +47,13 @@ export const ProjectProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     if (session && session.backendToken && session.backendToken.accessKey) {
-      fetchProjects();
+      fetchWeekHours();
     }
   }, [session]);
 
   return (
-    <ProjectContext.Provider value={{ projects, fetchProjects }}>
+    <WeekHourContext.Provider value={{ weekHours, fetchWeekHours }}>
       {children}
-    </ProjectContext.Provider>
+    </WeekHourContext.Provider>
   );
 };

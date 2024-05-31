@@ -3,17 +3,31 @@ import { Flex, Radio, Select, Text, TextArea } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { ProjectContext } from "../contexts/ProjectProvider";
 
-const ProjectSelector = () => {
-  const [radioType, setRadioType] = useState("project");
-  const { projects } = React.useContext(ProjectContext);
+interface Props {
+  radioType: string;
+  setRadioType: (value: string) => void;
+  selectedProject: string;
+  setSelectedProject: (value: string) => void;
+  task: string;
+  setTask: (value: string) => void;
+  // setSelectedProject: React.Dispatch<React.SetStateAction<string>>;
+}
 
-  const [defaultOption, setDefaultOption] = useState("");
-  const [selectedProject, setSelectedProject] = useState("");
+const ProjectSelector = ({
+  radioType,
+  setRadioType,
+  selectedProject,
+  setSelectedProject,
+  task,
+  setTask,
+}: Props) => {
+  const { projects } = React.useContext(ProjectContext);
   let optionArr = projects.filter((project) => project.type === radioType);
 
   const handleRadioChange = (option: string) => {
     setRadioType(option);
-    setDefaultOption("");
+    setSelectedProject("");
+    setTask("");
     optionArr = projects.filter((project) => project.type === radioType);
   };
   const valueNameMap = optionArr.reduce<{ [key: string]: string }>(
@@ -37,7 +51,8 @@ const ProjectSelector = () => {
               size="3"
               name="project-radio"
               value="project"
-              defaultChecked
+              // defaultChecked
+              checked={radioType == "project"}
               onChange={() => handleRadioChange("project")}
             />
             Project
@@ -49,6 +64,7 @@ const ProjectSelector = () => {
               size="3"
               name="project-radio"
               value="non-project"
+              checked={radioType == "non-project"}
               onChange={() => handleRadioChange("non-project")}
             />
             Non-project
@@ -56,13 +72,19 @@ const ProjectSelector = () => {
         </Flex>
       </Flex>
 
-      <Select.Root onValueChange={handleProjectChange} key={radioType}>
+      <Select.Root
+        onValueChange={handleProjectChange}
+        key={radioType}
+        value={selectedProject}
+      >
         <Select.Trigger
           placeholder={
             radioType == "project" ? "Select Project" : "Select Non-Project"
           }
-          value={defaultOption}
-        />
+          // value={selectedProject}
+        >
+          {selectedProject}
+        </Select.Trigger>
         <Select.Content>
           <Select.Group>
             <Select.Item disabled value=" ">
@@ -77,7 +99,13 @@ const ProjectSelector = () => {
         </Select.Content>
       </Select.Root>
 
-      <TextArea mt="2" radius="none" placeholder="Task details…" />
+      <TextArea
+        mt="2"
+        value={task}
+        onChange={(e) => setTask(e.target.value)}
+        radius="none"
+        placeholder="Task details…"
+      />
     </>
   );
 };

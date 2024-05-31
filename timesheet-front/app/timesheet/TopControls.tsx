@@ -1,30 +1,50 @@
+"use client";
 import { Box, Button, Flex, Grid, Section, Text } from "@radix-ui/themes";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineArrowRight, AiOutlineArrowLeft } from "react-icons/ai";
+import { BiReset } from "react-icons/bi";
+import useWeekStore from "../store/weekStore";
 
 const TopControls = () => {
+  const { week, defautlWeek, weeksInYear, increment, decrement, reset } =
+    useWeekStore();
+
   return (
     <Grid columns="3" width="auto">
       <Box>
-        <Button radius="none" variant="soft">
-          Last Week
-        </Button>
-        <Button radius="none" variant="solid">
-          This Week
+        <Button
+          radius="none"
+          title="Reset Week"
+          variant="surface"
+          onClick={() => reset()}
+        >
+          <BiReset />
         </Button>
       </Box>
       <Box style={{ textAlign: "center" }}>
-        <Button radius="none" variant="soft">
+        <Button
+          radius="none"
+          variant="soft"
+          disabled={week <= 1}
+          onClick={() => decrement()}
+        >
           <AiOutlineArrowLeft />
-          Week 5
+          week {week - 1}
         </Button>
-        <Button radius="none" variant="solid">
-          Week 6
+        <Button radius="none" variant="solid" disabled>
+          week {week}
         </Button>
-        <Button radius="none" variant="soft">
-          Week 7
-          <AiOutlineArrowRight />
-        </Button>
+        {week + 1 <= weeksInYear && (
+          <Button
+            radius="none"
+            variant="soft"
+            disabled={week > defautlWeek}
+            onClick={() => increment()}
+          >
+            week {week + 1}
+            <AiOutlineArrowRight />
+          </Button>
+        )}
       </Box>
     </Grid>
   );

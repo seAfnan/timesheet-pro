@@ -1,48 +1,283 @@
-import { Box, Grid, Text, Flex, Section } from "@radix-ui/themes";
-import React, { useState } from "react";
+"use client";
+import { Box, Grid, Text, Flex, Button, TextField } from "@radix-ui/themes";
+import React, { useEffect, useState } from "react";
 import ProjectSelector from "./ProjectSelector";
-import HourInputs from "./HourInputs";
+import useWeekStore from "../store/weekStore";
+import toast, { Toaster } from "react-hot-toast";
+import ProjectHoursList from "./ProjectHoursList";
+// import HourInputs from "./HourInputs";
+
+type ValueType = {
+  mondayInp: number;
+  tuesdayInp: number;
+  wednesdayInp: number;
+  thursdayInp: number;
+  fridayInp: number;
+  saturdayInp: number;
+  sundayInp: number;
+  projectType: string;
+  project: string;
+  task: string;
+};
 
 const FormComponents = () => {
-  // const [selectedRadio, setSelectedRadio] = useState("");
-  // const [selectedDropdown, setSelectedDropdown] = useState("");
+  const [radioType, setRadioType] = useState("project");
+  const [selectedProject, setSelectedProject] = useState("");
+  const [taskDetail, setTaskDetail] = useState("");
+  const [values, setValues] = useState({
+    mondayInp: 0,
+    tuesdayInp: 0,
+    wednesdayInp: 0,
+    thursdayInp: 0,
+    fridayInp: 0,
+    saturdayInp: 0,
+    sundayInp: 0,
+  });
+  const [projectHours, setProjectHours] = useState<ValueType[]>([]);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const { datesOfWeek } = useWeekStore();
+  const [addButtonText, setAddButtonText] = useState("Add");
+
+  function parseNumber(value: string | number): number {
+    const parsedValue = parseFloat(value as string);
+    return Number.isInteger(parsedValue)
+      ? parseInt(value as string, 10)
+      : parsedValue;
+  }
+
+  // Handler function to add the form values to an array
+  const handleAdd = () => {
+    if (selectedProject === "") {
+      toast.error("Please select a project");
+      return;
+    }
+    const newItem = {
+      mondayInp: parseNumber(values.mondayInp) || 0,
+      tuesdayInp: parseNumber(values.tuesdayInp) || 0,
+      wednesdayInp: parseNumber(values.wednesdayInp) || 0,
+      thursdayInp: parseNumber(values.thursdayInp) || 0,
+      fridayInp: parseNumber(values.fridayInp) || 0,
+      saturdayInp: parseNumber(values.saturdayInp) || 0,
+      sundayInp: parseNumber(values.sundayInp) || 0,
+      projectType: radioType,
+      project: selectedProject,
+      task: taskDetail,
+    };
+
+    if (editIndex !== null) {
+      setProjectHours((prevArray) => {
+        const newArray = [...prevArray];
+        newArray[editIndex] = newItem;
+        return newArray;
+      });
+      setEditIndex(null);
+    } else {
+      setProjectHours((prevArray) => [...prevArray, newItem]);
+    }
+
+    // Reset the form values
+    setValues({
+      mondayInp: 0,
+      tuesdayInp: 0,
+      wednesdayInp: 0,
+      thursdayInp: 0,
+      fridayInp: 0,
+      saturdayInp: 0,
+      sundayInp: 0,
+    });
+    setTaskDetail("");
+    setAddButtonText("Add");
+  };
+  useEffect(() => {
+    console.log(projectHours);
+  }, [projectHours]);
+
+  const handleRemove = (index: number) => {
+    setProjectHours((prevArray) => prevArray.filter((_, i) => i !== index));
+  };
+
+  const handleEdit = (index: number) => {
+    const item = projectHours[index];
+    setValues({
+      // ...values,
+      mondayInp: item.mondayInp,
+      tuesdayInp: item.tuesdayInp,
+      wednesdayInp: item.wednesdayInp,
+      thursdayInp: item.thursdayInp,
+      fridayInp: item.fridayInp,
+      saturdayInp: item.saturdayInp,
+      sundayInp: item.sundayInp,
+    });
+    setRadioType(item.projectType);
+    setSelectedProject(item.project);
+    setTaskDetail(item.task);
+    setEditIndex(index);
+    setAddButtonText("Update");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Handler function to update the value of a specific field
+  const handleChange =
+    (fieldName: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      let inputValue = event.target.value;
+
+      // Remove leading zeros
+      inputValue = inputValue.replace(/^0+/, "");
+
+      // Check if the input value is a valid number and greater than or equal to 0, or if it's an empty string
+      if (
+        inputValue === "" ||
+        (!isNaN(parseInt(inputValue)) && parseFloat(inputValue) >= 0)
+      ) {
+        setValues((prevValues) => ({
+          ...prevValues,
+          [fieldName]: inputValue,
+        }));
+      }
+    };
+
   return (
     <>
       <Flex
         gap="2"
-        pt="3"
+        p="2"
         style={{
           background: "var(--gray-a2)",
           borderRadius: "var(--radius-3)",
         }}
       >
+        <Toaster />
         <Box width="25%">
           <Flex direction="column">
             <ProjectSelector
-            // selectedRadio={selectedRadio}
-            // setSelectedRadio={setSelectedRadio}
-            // selectedDropdown={selectedDropdown}
-            // setSelectedDropdown={setSelectedDropdown}
+              radioType={radioType}
+              setRadioType={setRadioType}
+              selectedProject={selectedProject}
+              setSelectedProject={setSelectedProject}
+              task={taskDetail}
+              setTask={setTaskDetail}
             />
           </Flex>
         </Box>
         <Box width="75%">
-          <HourInputs
+          {/* <HourInputs
           // selectedRadio={selectedRadio}
           // selectedDropdown={selectedDropdown}
-          />
+          /> */}
+          <Flex direction="row" gap="1">
+            <Flex direction="column" align="center">
+              <Text size="2">Mon</Text>
+              <Text color="indigo" size="2">
+                {datesOfWeek[0]}
+              </Text>
+              <TextField.Root
+                style={{ textAlign: "center" }}
+                value={values.mondayInp}
+                onChange={handleChange("mondayInp")}
+                radius="none"
+                placeholder="Mon hr."
+              />
+            </Flex>
+            <Flex direction="column" align="center">
+              <Text size="2">Tue</Text>
+              <Text color="indigo" size="2">
+                {datesOfWeek[1]}
+              </Text>
+              <TextField.Root
+                style={{ textAlign: "center" }}
+                value={values.tuesdayInp}
+                onChange={handleChange("tuesdayInp")}
+                radius="none"
+                placeholder="Tue hr."
+              />
+            </Flex>
+            <Flex direction="column" align="center">
+              <Text size="2">Wed</Text>
+              <Text color="indigo" size="2">
+                {datesOfWeek[2]}
+              </Text>
+              <TextField.Root
+                style={{ textAlign: "center" }}
+                value={values.wednesdayInp}
+                onChange={handleChange("wednesdayInp")}
+                radius="none"
+                placeholder="Wed hr."
+              />
+            </Flex>
+            <Flex direction="column" align="center">
+              <Text size="2">Thu</Text>
+              <Text color="indigo" size="2">
+                {datesOfWeek[3]}
+              </Text>
+              <TextField.Root
+                style={{ textAlign: "center" }}
+                value={values.thursdayInp}
+                onChange={handleChange("thursdayInp")}
+                radius="none"
+                placeholder="Thu hr."
+              />
+            </Flex>
+            <Flex direction="column" align="center">
+              <Text size="2">Fri</Text>
+              <Text color="indigo" size="2">
+                {datesOfWeek[4]}
+              </Text>
+              <TextField.Root
+                style={{ textAlign: "center" }}
+                value={values.fridayInp}
+                onChange={handleChange("fridayInp")}
+                radius="none"
+                placeholder="Fri hr."
+              />
+            </Flex>
+            <Flex direction="column" align="center">
+              <Text size="2">Sat</Text>
+              <Text color="indigo" size="2">
+                {datesOfWeek[5]}
+              </Text>
+              <TextField.Root
+                style={{ textAlign: "center" }}
+                value={values.saturdayInp}
+                onChange={handleChange("saturdayInp")}
+                radius="none"
+                placeholder="Sat hr."
+              />
+            </Flex>
+            <Flex direction="column" align="center">
+              <Text size="2">Sun</Text>
+              <Text color="indigo" size="2">
+                {datesOfWeek[6]}
+              </Text>
+              <TextField.Root
+                style={{ textAlign: "center" }}
+                value={values.sundayInp}
+                onChange={handleChange("sundayInp")}
+                radius="none"
+                placeholder="Sun hr."
+              />
+            </Flex>
+            <Flex direction="column" align="center">
+              <Button
+                style={{ marginTop: "39.5px" }}
+                radius="none"
+                variant="solid"
+                color={addButtonText === "Add" ? "indigo" : "orange"}
+                onClick={handleAdd}
+              >
+                {addButtonText}
+              </Button>
+            </Flex>
+          </Flex>
         </Box>
       </Flex>
 
       <Grid>
-        <Flex
-          style={{
-            background: "var(--gray-a2)",
-            borderRadius: "var(--radius-3)",
-          }}
-        >
-          This is flex
-        </Flex>
+        <ProjectHoursList
+          projectHours={projectHours}
+          handleRemove={handleRemove}
+          handleEdit={handleEdit}
+          editIndex={editIndex}
+        />
       </Grid>
     </>
   );

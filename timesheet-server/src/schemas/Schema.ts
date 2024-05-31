@@ -25,3 +25,13 @@ export class Project {
   type: string;
 }
 export const ProjectSchema = SchemaFactory.createForClass(Project);
+
+@Schema({ timestamps: true })
+export class WeekHours {
+  @Prop({ required: true })
+  week: string;
+
+  @Prop({ required: true })
+  hours: string;
+}
+export const WeekHourSchema = SchemaFactory.createForClass(WeekHours);

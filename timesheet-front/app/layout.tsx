@@ -8,6 +8,7 @@ import DarkModeContext from "./components/DarkModeContext";
 import AuthProvider from "./auth/Provider";
 import { Theme, ThemePanel } from "@radix-ui/themes";
 import { ProjectProvider } from "./contexts/ProjectProvider";
+import { WeekHourProvider } from "./contexts/WeekHourProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -27,11 +28,13 @@ export default function RootLayout({
         <DarkModeContext>
           <AuthProvider>
             <ProjectProvider>
-              <Theme accentColor="iris" radius="none">
-                <NavBar />
-                <main className="px-3">{children}</main>
-                {/* <ThemePanel /> */}
-              </Theme>
+              <WeekHourProvider>
+                <Theme accentColor="iris" radius="none">
+                  <NavBar />
+                  <main className="px-3">{children}</main>
+                  {/* <ThemePanel /> */}
+                </Theme>
+              </WeekHourProvider>
             </ProjectProvider>
           </AuthProvider>
         </DarkModeContext>

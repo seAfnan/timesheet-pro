@@ -7,6 +7,7 @@ import {
   AiOutlineFieldTime,
   AiFillProject,
 } from "react-icons/ai";
+import { TbClockHour3 } from "react-icons/tb";
 import classnames from "classnames";
 import { useSession } from "next-auth/react";
 import { Avatar, DropdownMenu, Flex } from "@radix-ui/themes";
@@ -25,6 +26,7 @@ const NavBar = () => {
     { label: "Dashboard", href: "/", icon: <AiOutlineHome /> },
     { label: "Timesheet", href: "/timesheet", icon: <AiOutlineFieldTime /> },
     { label: "Projects", href: "/project", icon: <AiFillProject /> },
+    { label: "Week Hours", href: "/hours", icon: <TbClockHour3 /> },
   ];
   return (
     <nav
