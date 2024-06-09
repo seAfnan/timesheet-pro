@@ -55,7 +55,7 @@ const ProjectSelector = ({
               checked={radioType == "project"}
               onChange={() => handleRadioChange("project")}
             />
-            Project
+            project
           </Text>
         </Flex>
         <Flex asChild gap="2">
@@ -67,7 +67,7 @@ const ProjectSelector = ({
               checked={radioType == "non-project"}
               onChange={() => handleRadioChange("non-project")}
             />
-            Non-project
+            non-project
           </Text>
         </Flex>
       </Flex>
@@ -79,7 +79,7 @@ const ProjectSelector = ({
       >
         <Select.Trigger
           placeholder={
-            radioType == "project" ? "Select Project" : "Select Non-Project"
+            radioType == "project" ? "select project" : "select non-project"
           }
           // value={selectedProject}
         >
@@ -88,7 +88,7 @@ const ProjectSelector = ({
         <Select.Content>
           <Select.Group>
             <Select.Item disabled value=" ">
-              {radioType == "project" ? "Select Project" : "Select Non-Project"}
+              {radioType == "project" ? "select project" : "select pon-project"}
             </Select.Item>
             {optionArr.map((project) => (
               <Select.Item value={project._id.toString()} key={project._id}>
@@ -104,7 +104,7 @@ const ProjectSelector = ({
         value={task}
         onChange={(e) => setTask(e.target.value)}
         radius="none"
-        placeholder="Task details…"
+        placeholder="task details…"
       />
     </>
   );

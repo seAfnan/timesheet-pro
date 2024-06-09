@@ -36,7 +36,7 @@ const FormComponents = () => {
   const [projectHours, setProjectHours] = useState<ValueType[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const { datesOfWeek } = useWeekStore();
-  const [addButtonText, setAddButtonText] = useState("Add");
+  const [addButtonText, setAddButtonText] = useState("add");
 
   function parseNumber(value: string | number): number {
     const parsedValue = parseFloat(value as string);
@@ -86,7 +86,7 @@ const FormComponents = () => {
       sundayInp: 0,
     });
     setTaskDetail("");
-    setAddButtonText("Add");
+    setAddButtonText("add");
   };
   useEffect(() => {
     console.log(projectHours);
@@ -112,7 +112,7 @@ const FormComponents = () => {
     setSelectedProject(item.project);
     setTaskDetail(item.task);
     setEditIndex(index);
-    setAddButtonText("Update");
+    setAddButtonText("update");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -166,7 +166,7 @@ const FormComponents = () => {
           /> */}
           <Flex direction="row" gap="1">
             <Flex direction="column" align="center">
-              <Text size="2">Mon</Text>
+              <Text size="2">mon</Text>
               <Text color="indigo" size="2">
                 {datesOfWeek[0]}
               </Text>
@@ -175,11 +175,11 @@ const FormComponents = () => {
                 value={values.mondayInp}
                 onChange={handleChange("mondayInp")}
                 radius="none"
-                placeholder="Mon hr."
+                placeholder="mon hr."
               />
             </Flex>
             <Flex direction="column" align="center">
-              <Text size="2">Tue</Text>
+              <Text size="2">tue</Text>
               <Text color="indigo" size="2">
                 {datesOfWeek[1]}
               </Text>
@@ -188,11 +188,11 @@ const FormComponents = () => {
                 value={values.tuesdayInp}
                 onChange={handleChange("tuesdayInp")}
                 radius="none"
-                placeholder="Tue hr."
+                placeholder="tue hr."
               />
             </Flex>
             <Flex direction="column" align="center">
-              <Text size="2">Wed</Text>
+              <Text size="2">wed</Text>
               <Text color="indigo" size="2">
                 {datesOfWeek[2]}
               </Text>
@@ -201,11 +201,11 @@ const FormComponents = () => {
                 value={values.wednesdayInp}
                 onChange={handleChange("wednesdayInp")}
                 radius="none"
-                placeholder="Wed hr."
+                placeholder="wed hr."
               />
             </Flex>
             <Flex direction="column" align="center">
-              <Text size="2">Thu</Text>
+              <Text size="2">thu</Text>
               <Text color="indigo" size="2">
                 {datesOfWeek[3]}
               </Text>
@@ -214,11 +214,11 @@ const FormComponents = () => {
                 value={values.thursdayInp}
                 onChange={handleChange("thursdayInp")}
                 radius="none"
-                placeholder="Thu hr."
+                placeholder="thu hr."
               />
             </Flex>
             <Flex direction="column" align="center">
-              <Text size="2">Fri</Text>
+              <Text size="2">fri</Text>
               <Text color="indigo" size="2">
                 {datesOfWeek[4]}
               </Text>
@@ -227,11 +227,11 @@ const FormComponents = () => {
                 value={values.fridayInp}
                 onChange={handleChange("fridayInp")}
                 radius="none"
-                placeholder="Fri hr."
+                placeholder="fri hr."
               />
             </Flex>
             <Flex direction="column" align="center">
-              <Text size="2">Sat</Text>
+              <Text size="2">sat</Text>
               <Text color="indigo" size="2">
                 {datesOfWeek[5]}
               </Text>
@@ -240,11 +240,11 @@ const FormComponents = () => {
                 value={values.saturdayInp}
                 onChange={handleChange("saturdayInp")}
                 radius="none"
-                placeholder="Sat hr."
+                placeholder="sat hr."
               />
             </Flex>
             <Flex direction="column" align="center">
-              <Text size="2">Sun</Text>
+              <Text size="2">sun</Text>
               <Text color="indigo" size="2">
                 {datesOfWeek[6]}
               </Text>
@@ -253,7 +253,7 @@ const FormComponents = () => {
                 value={values.sundayInp}
                 onChange={handleChange("sundayInp")}
                 radius="none"
-                placeholder="Sun hr."
+                placeholder="sun hr."
               />
             </Flex>
             <Flex direction="column" align="center">
@@ -261,7 +261,7 @@ const FormComponents = () => {
                 style={{ marginTop: "39.5px" }}
                 radius="none"
                 variant="solid"
-                color={addButtonText === "Add" ? "indigo" : "orange"}
+                color={addButtonText === "add" ? "indigo" : "orange"}
                 onClick={handleAdd}
               >
                 {addButtonText}

@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProjectModule } from './project/project.module';
 import { HoursModule } from './hours/hours.module';
+import { RecordModule } from './record/record.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { HoursModule } from './hours/hours.module';
     AuthModule,
     ProjectModule,
     HoursModule,
+    RecordModule,
   ],
   controllers: [AppController],
   providers: [AppService],

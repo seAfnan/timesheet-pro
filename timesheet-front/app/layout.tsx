@@ -9,6 +9,8 @@ import AuthProvider from "./auth/Provider";
 import { Theme, ThemePanel } from "@radix-ui/themes";
 import { ProjectProvider } from "./contexts/ProjectProvider";
 import { WeekHourProvider } from "./contexts/WeekHourProvider";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -16,6 +18,8 @@ export const metadata: Metadata = {
   title: "Timesheet",
   description: "Created to manage your time.",
 };
+
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -27,15 +31,18 @@ export default function RootLayout({
       <body className={inter.variable}>
         <DarkModeContext>
           <AuthProvider>
-            <ProjectProvider>
-              <WeekHourProvider>
-                <Theme accentColor="iris" radius="none">
-                  <NavBar />
-                  <main className="px-3">{children}</main>
-                  {/* <ThemePanel /> */}
-                </Theme>
-              </WeekHourProvider>
-            </ProjectProvider>
+            <QueryClientProvider client={queryClient}>
+              <ProjectProvider>
+                <WeekHourProvider>
+                  <Theme accentColor="iris" radius="none">
+                    <NavBar />
+                    <main className="px-3">{children}</main>
+                    <ReactQueryDevtools />
+                    {/* <ThemePanel /> */}
+                  </Theme>
+                </WeekHourProvider>
+              </ProjectProvider>
+            </QueryClientProvider>
           </AuthProvider>
         </DarkModeContext>
       </body>

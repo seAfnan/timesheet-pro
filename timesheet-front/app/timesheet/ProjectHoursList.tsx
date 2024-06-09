@@ -1,7 +1,17 @@
-import React from "react";
-import { Box, Flex, Text, Button, TextField } from "@radix-ui/themes";
+import React, { useEffect } from "react";
+import {
+  Box,
+  Flex,
+  Text,
+  Button,
+  TextField,
+  Container,
+  Heading,
+} from "@radix-ui/themes";
 import { AiFillEdit } from "react-icons/ai";
 import { FaTrash } from "react-icons/fa";
+import { BsSave } from "react-icons/bs";
+import toast, { Toaster } from "react-hot-toast";
 
 type Props = {
   projectHours: {
@@ -27,6 +37,13 @@ const ProjectHoursList: React.FC<Props> = ({
   handleEdit,
   editIndex,
 }) => {
+  const handleSave = () => {
+    if (projectHours.length == 0) {
+      toast.error("Please add some hours");
+      return;
+    }
+  };
+
   return (
     <>
       {projectHours.map((item, index) => (
@@ -119,6 +136,80 @@ const ProjectHoursList: React.FC<Props> = ({
           </Box>
         </Flex>
       ))}
+      {projectHours.length > 0 && (
+        <Flex gap="1" pt="2" pb="2" style={{ textAlign: "center" }}>
+          <Box
+            width="25%"
+            pt="2"
+            pb="2"
+            style={{
+              background: "var(--gray-a2)",
+              borderRadius: "var(--radius-3)",
+            }}
+          ></Box>
+          <Box
+            width="18.5%"
+            pt="2"
+            pb="2"
+            ml="1"
+            style={{
+              background: "var(--gray-a2)",
+              borderRadius: "var(--radius-3)",
+            }}
+          >
+            <Heading size="3" mb="1" weight="light">
+              hours required
+            </Heading>
+            <Text size="3" color="orange">
+              37
+            </Text>
+          </Box>
+          <Box
+            width="18.5%"
+            pt="2"
+            pb="2"
+            style={{
+              background: "var(--gray-a2)",
+              borderRadius: "var(--radius-3)",
+            }}
+          >
+            <Heading size="3" mb="1" weight="light">
+              hours committed
+            </Heading>
+            <Text size="3" color="orange">
+              40
+            </Text>
+          </Box>
+          <Box
+            width="18.5%"
+            pt="2"
+            pb="2"
+            style={{
+              background: "var(--gray-a2)",
+              borderRadius: "var(--radius-3)",
+            }}
+          >
+            <Heading size="3" mb="1" weight="light">
+              overtime
+            </Heading>
+            <Text size="3" color="crimson">
+              3
+            </Text>
+          </Box>
+          <Box width="18.5%">
+            <Button
+              style={{ width: "100%", height: "98%", fontSize: "1.5rem" }}
+              color="indigo"
+              variant="solid"
+              onClick={handleSave}
+            >
+              <BsSave style={{ marginRight: "0.5rem" }} />
+              save
+            </Button>
+          </Box>
+          <Toaster />
+        </Flex>
+      )}
     </>
   );
 };
