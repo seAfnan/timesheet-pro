@@ -168,4 +168,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-Your Name - [hafnan03@gmail.com](mailto:hafnan03@gmail.com)
+Email - [hafnan03@gmail.com](mailto:hafnan03@gmail.com)
