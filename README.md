@@ -153,6 +153,8 @@ timesheet-pro/
 
 ## Contributing
 
+(not recommended, because work is in-progress)
+
 If you want to contribute to this project, please follow these steps:
 
 1. Fork the repository.
