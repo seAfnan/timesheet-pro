@@ -2,6 +2,9 @@
 
 This project is a timesheet management system where employees can add and commit their hours on a daily basis by selecting projects or non-project tasks. Employees can also add hours on a weekly basis. The system includes a mechanism to manage maximum weekly hours, handle overtime, and manage approval workflows.
 
+![timesheet-pro](https://github.com/seAfnan/timesheet-pro/assets/20145270/cb44fc47-2f08-44c6-a420-01fdcdcd83d5)
+
+
 ## Table of Contents
 
 - [Introduction](#introduction)
