@@ -1,42 +1,98 @@
 "use client";
-import { Box, Grid, Text, Flex, Button, TextField } from "@radix-ui/themes";
-import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Grid,
+  Text,
+  Flex,
+  Button,
+  TextField,
+  TextArea,
+  Heading,
+} from "@radix-ui/themes";
+import React, { useContext, useEffect, useState } from "react";
 import ProjectSelector from "./ProjectSelector";
 import useWeekStore from "../store/weekStore";
 import toast, { Toaster } from "react-hot-toast";
 import ProjectHoursList from "./ProjectHoursList";
-// import HourInputs from "./HourInputs";
-
-type ValueType = {
-  mondayInp: number;
-  tuesdayInp: number;
-  wednesdayInp: number;
-  thursdayInp: number;
-  fridayInp: number;
-  saturdayInp: number;
-  sundayInp: number;
-  projectType: string;
-  project: string;
-  task: string;
-};
+import { BsSave } from "react-icons/bs";
+import { WeekHourContext } from "../providers/WeekHourProvider";
+import Spinner from "../components/Spinner";
+import axios from "axios";
+import { BACKEND_URL } from "../lib/Constants";
+import { useSession } from "next-auth/react";
 
 const FormComponents = () => {
+  const { status, data: session } = useSession();
+  const { weekRecord, updateWeekRecord, datesOfWeek, week } = useWeekStore();
   const [radioType, setRadioType] = useState("project");
   const [selectedProject, setSelectedProject] = useState("");
   const [taskDetail, setTaskDetail] = useState("");
   const [values, setValues] = useState({
     mondayInp: 0,
+    mondayComment: "",
     tuesdayInp: 0,
+    tuesdayComment: "",
     wednesdayInp: 0,
+    wednesdayComment: "",
     thursdayInp: 0,
+    thursdayComment: "",
     fridayInp: 0,
+    fridayComment: "",
     saturdayInp: 0,
+    saturdayComment: "",
     sundayInp: 0,
+    sundayComment: "",
   });
-  const [projectHours, setProjectHours] = useState<ValueType[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const { datesOfWeek } = useWeekStore();
   const [addButtonText, setAddButtonText] = useState("add");
+  const { weekHours } = useContext(WeekHourContext);
+  const [submitting, setSubmitting] = useState(false);
+
+  const daysOfWeek = [
+    { label: "mon", date: datesOfWeek[0], key: "mondayInp" },
+    { label: "tue", date: datesOfWeek[1], key: "tuesdayInp" },
+    { label: "wed", date: datesOfWeek[2], key: "wednesdayInp" },
+    { label: "thu", date: datesOfWeek[3], key: "thursdayInp" },
+    { label: "fri", date: datesOfWeek[4], key: "fridayInp" },
+    { label: "sat", date: datesOfWeek[5], key: "saturdayInp" },
+    { label: "sun", date: datesOfWeek[6], key: "sundayInp" },
+  ];
+
+  const calculateCommittedHours = (
+    details: { [key: string]: number | string }[]
+  ) => {
+    return details.reduce((total, item) => {
+      const monday = Number(item.monday) || 0;
+      const tuesday = Number(item.tuesday) || 0;
+      const wednesday = Number(item.wednesday) || 0;
+      const thursday = Number(item.thursday) || 0;
+      const friday = Number(item.friday) || 0;
+      const saturday = Number(item.saturday) || 0;
+      const sunday = Number(item.sunday) || 0;
+
+      return (
+        total +
+        monday +
+        tuesday +
+        wednesday +
+        thursday +
+        friday +
+        saturday +
+        sunday
+      );
+    }, 0);
+  };
+
+  useEffect(() => {
+    const committedHour = calculateCommittedHours(weekRecord.details);
+    updateWeekRecord("committedHours", committedHour);
+    updateWeekRecord(
+      "overtime",
+      Number(committedHour) - Number(weekHours[week]?.hours) < 0
+        ? 0
+        : Number(committedHour) - Number(weekHours[week]?.hours)
+    );
+  }, [weekRecord.details]);
 
   function parseNumber(value: string | number): number {
     const parsedValue = parseFloat(value as string);
@@ -52,61 +108,67 @@ const FormComponents = () => {
       return;
     }
     const newItem = {
-      mondayInp: parseNumber(values.mondayInp) || 0,
-      tuesdayInp: parseNumber(values.tuesdayInp) || 0,
-      wednesdayInp: parseNumber(values.wednesdayInp) || 0,
-      thursdayInp: parseNumber(values.thursdayInp) || 0,
-      fridayInp: parseNumber(values.fridayInp) || 0,
-      saturdayInp: parseNumber(values.saturdayInp) || 0,
-      sundayInp: parseNumber(values.sundayInp) || 0,
+      monday: parseNumber(values.mondayInp) || 0,
+      tuesday: parseNumber(values.tuesdayInp) || 0,
+      wednesday: parseNumber(values.wednesdayInp) || 0,
+      thursday: parseNumber(values.thursdayInp) || 0,
+      friday: parseNumber(values.fridayInp) || 0,
+      saturday: parseNumber(values.saturdayInp) || 0,
+      sunday: parseNumber(values.sundayInp) || 0,
       projectType: radioType,
       project: selectedProject,
       task: taskDetail,
     };
 
+    let newArray;
     if (editIndex !== null) {
-      setProjectHours((prevArray) => {
-        const newArray = [...prevArray];
-        newArray[editIndex] = newItem;
-        return newArray;
-      });
+      newArray = [...weekRecord.details];
+      newArray[editIndex] = newItem;
       setEditIndex(null);
     } else {
-      setProjectHours((prevArray) => [...prevArray, newItem]);
+      newArray = [...weekRecord.details, newItem];
     }
+    updateWeekRecord("details", newArray);
 
     // Reset the form values
     setValues({
       mondayInp: 0,
+      mondayComment: "",
       tuesdayInp: 0,
+      tuesdayComment: "",
       wednesdayInp: 0,
+      wednesdayComment: "",
       thursdayInp: 0,
+      thursdayComment: "",
       fridayInp: 0,
+      fridayComment: "",
       saturdayInp: 0,
+      saturdayComment: "",
       sundayInp: 0,
+      sundayComment: "",
     });
     setTaskDetail("");
     setAddButtonText("add");
   };
-  useEffect(() => {
-    console.log(projectHours);
-  }, [projectHours]);
 
   const handleRemove = (index: number) => {
-    setProjectHours((prevArray) => prevArray.filter((_, i) => i !== index));
+    const newArray = weekRecord.details.filter(
+      (_: any, i: number) => i !== index
+    );
+    updateWeekRecord("details", newArray);
   };
 
   const handleEdit = (index: number) => {
-    const item = projectHours[index];
+    const item = weekRecord.details[index];
     setValues({
-      // ...values,
-      mondayInp: item.mondayInp,
-      tuesdayInp: item.tuesdayInp,
-      wednesdayInp: item.wednesdayInp,
-      thursdayInp: item.thursdayInp,
-      fridayInp: item.fridayInp,
-      saturdayInp: item.saturdayInp,
-      sundayInp: item.sundayInp,
+      ...values,
+      mondayInp: item.monday,
+      tuesdayInp: item.tuesday,
+      wednesdayInp: item.wednesday,
+      thursdayInp: item.thursday,
+      fridayInp: item.friday,
+      saturdayInp: item.saturday,
+      sundayInp: item.sunday,
     });
     setRadioType(item.projectType);
     setSelectedProject(item.project);
@@ -136,6 +198,59 @@ const FormComponents = () => {
       }
     };
 
+  const handleSave = async () => {
+    if (weekRecord.details.length == 0) {
+      toast.error("Please add some hours");
+      return;
+    }
+    let message = "Record ";
+    setSubmitting(true);
+    console.log(weekRecord.id);
+    if (weekRecord.id) {
+      await axios.patch(BACKEND_URL + "/record/" + weekRecord.id, weekRecord, {
+        headers: {
+          Authorization: `Bearer ${session?.backendToken.accessKey}`,
+        },
+      });
+      message = message + " updated successfully.";
+    } else {
+      updateWeekRecord({
+        employee: session?.user?.name,
+        employeeEmail: session?.user?.email,
+        mondayComment: values.mondayComment,
+        tuesdayComment: values.tuesdayComment,
+        wednesdayComment: values.wednesdayComment,
+        thursdayComment: values.thursdayComment,
+        fridayComment: values.fridayComment,
+        saturdayComment: values.saturdayComment,
+        sundayComment: values.sundayComment,
+      });
+
+      console.log(weekRecord);
+      await axios.post(BACKEND_URL + "/record/create", weekRecord, {
+        headers: {
+          Authorization: `Bearer ${session?.backendToken.accessKey}`,
+        },
+      });
+      message = message + " created successfully.";
+    }
+    toast.success(message);
+    setSubmitting(false);
+  };
+
+  const clearComments = () => {
+    setValues({
+      ...values,
+      mondayComment: "",
+      tuesdayComment: "",
+      wednesdayComment: "",
+      thursdayComment: "",
+      fridayComment: "",
+      saturdayComment: "",
+      sundayComment: "",
+    });
+  };
+
   return (
     <>
       <Flex
@@ -160,10 +275,6 @@ const FormComponents = () => {
           </Flex>
         </Box>
         <Box width="75%">
-          {/* <HourInputs
-          // selectedRadio={selectedRadio}
-          // selectedDropdown={selectedDropdown}
-          /> */}
           <Flex direction="row" gap="1">
             <Flex direction="column" align="center">
               <Text size="2">mon</Text>
@@ -260,7 +371,7 @@ const FormComponents = () => {
               <Button
                 style={{ marginTop: "39.5px" }}
                 radius="none"
-                variant="solid"
+                variant="soft"
                 color={addButtonText === "add" ? "indigo" : "orange"}
                 onClick={handleAdd}
               >
@@ -273,12 +384,140 @@ const FormComponents = () => {
 
       <Grid>
         <ProjectHoursList
-          projectHours={projectHours}
+          projectHours={weekRecord.details}
           handleRemove={handleRemove}
           handleEdit={handleEdit}
           editIndex={editIndex}
         />
       </Grid>
+
+      {/* Comment boxes */}
+      {weekRecord.details.length > 0 && (
+        <Flex
+          gap="2"
+          p="2"
+          mt="2"
+          style={{
+            // background: "var(--gray-a2)",
+            borderRadius: "var(--radius-3)",
+          }}
+        >
+          <Box width="25%"></Box>
+          <Box width="75%">
+            <Flex direction="row" gap="1">
+              {daysOfWeek.map((day) => (
+                <Flex direction="column" align="center" key={day.key}>
+                  <Text size="2">{day.label}</Text>
+                  <Text color="indigo" size="2">
+                    {day.date}
+                  </Text>
+                  <TextField.Root
+                    style={{ textAlign: "center" }}
+                    value={values[day.key]}
+                    onChange={(e) => handleChange(day.key, e.target.value)}
+                    radius="none"
+                    placeholder={`${day.label} hr.`}
+                  />
+                </Flex>
+              ))}
+              <Flex direction="column" align="center">
+                <Button
+                  style={{ marginTop: "39.5px" }}
+                  radius="none"
+                  variant="soft"
+                  color={addButtonText === "add" ? "indigo" : "orange"}
+                  onClick={handleAdd}
+                >
+                  {addButtonText}
+                </Button>
+              </Flex>
+            </Flex>
+          </Box>
+        </Flex>
+      )}
+
+      {/* Summary and save btn */}
+      {weekRecord.details.length > 0 && (
+        <Flex gap="1" pt="2" pb="2" style={{ textAlign: "center" }}>
+          <Box
+            width="25%"
+            pt="2"
+            pb="2"
+            style={{
+              background: "var(--gray-a2)",
+              borderRadius: "var(--radius-3)",
+            }}
+          ></Box>
+          <Box
+            width="18.5%"
+            pt="2"
+            pb="2"
+            ml="1"
+            style={{
+              background: "var(--gray-a2)",
+              borderRadius: "var(--radius-3)",
+            }}
+          >
+            <Heading size="3" mb="1" weight="light">
+              hours required
+            </Heading>
+            <Text size="3" color="orange">
+              {weekHours[week].hours}
+            </Text>
+          </Box>
+          <Box
+            width="18.5%"
+            pt="2"
+            pb="2"
+            style={{
+              background: "var(--gray-a2)",
+              borderRadius: "var(--radius-3)",
+            }}
+          >
+            <Heading size="3" mb="1" weight="light">
+              hours committed
+            </Heading>
+            <Text size="3" color="orange">
+              {weekRecord.committedHours}
+            </Text>
+          </Box>
+          <Box
+            width="18.5%"
+            pt="2"
+            pb="2"
+            style={{
+              background: "var(--gray-a2)",
+              borderRadius: "var(--radius-3)",
+            }}
+          >
+            <Heading size="3" mb="1" weight="light">
+              overtime
+            </Heading>
+            <Text size="3" color="crimson">
+              {weekRecord.overtime}
+            </Text>
+          </Box>
+          <Box width="18.5%">
+            <Button
+              style={{ width: "100%", height: "98%", fontSize: "1.5rem" }}
+              color="indigo"
+              variant="solid"
+              onClick={handleSave}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <Spinner />
+              ) : (
+                <>
+                  <BsSave style={{ marginRight: "0.5rem" }} />
+                  save
+                </>
+              )}
+            </Button>
+          </Box>
+          <Toaster />
+        </Flex>
+      )}
     </>
   );
 };

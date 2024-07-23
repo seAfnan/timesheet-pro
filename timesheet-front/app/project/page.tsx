@@ -23,8 +23,8 @@ import AxiosErrorMessage from "../components/AxiosErrorMessage";
 import ErrorMessage from "../components/ErrorMessage";
 import { BACKEND_URL } from "../lib/Constants";
 import { projectSchema } from "../ValidationSchemas";
-import { ProjectContext } from "../contexts/ProjectProvider";
-import { Project } from "../contexts/ProjectProvider";
+import { ProjectContext } from "../providers/ProjectProvider";
+import { Project } from "../providers/ProjectProvider";
 
 type ProjectFormData = z.infer<typeof projectSchema>;
 

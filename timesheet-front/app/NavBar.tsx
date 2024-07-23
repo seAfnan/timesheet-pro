@@ -14,7 +14,7 @@ import { Avatar, DropdownMenu, Flex } from "@radix-ui/themes";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import DarkModeTrigger from "./components/DarkModeTrigger";
-import { ThemeContext } from "./components/DarkModeContext";
+import { ThemeContext } from "./providers/DarkModeProvider";
 import AvatarImg from "./images/avatar.jpg";
 
 const NavBar = () => {

@@ -23,7 +23,7 @@ import AxiosErrorMessage from "../components/AxiosErrorMessage";
 import ErrorMessage from "../components/ErrorMessage";
 import { BACKEND_URL } from "../lib/Constants";
 import { weekSchema } from "../ValidationSchemas";
-import { WeekHourContext, WeekHours } from "../contexts/WeekHourProvider";
+import { WeekHourContext, WeekHours } from "../providers/WeekHourProvider";
 import useWeekStore from "../store/weekStore";
 
 type WeekFormData = z.infer<typeof weekSchema>;

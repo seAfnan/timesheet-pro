@@ -1,7 +1,7 @@
 "use client";
 import { Flex, Radio, Select, Text, TextArea } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import { ProjectContext } from "../contexts/ProjectProvider";
+import { ProjectContext } from "../providers/ProjectProvider";
 
 interface Props {
   radioType: string;

@@ -6,8 +6,15 @@ import { BiReset } from "react-icons/bi";
 import useWeekStore from "../store/weekStore";
 
 const TopControls = () => {
-  const { week, defautlWeek, weeksInYear, increment, decrement, reset } =
-    useWeekStore();
+  const {
+    week,
+    defautlWeek,
+    weeksInYear,
+    weekIncrement,
+    weekDecrement,
+    weekReset,
+    weekRecord,
+  } = useWeekStore();
 
   return (
     <Grid columns="3" width="auto">
@@ -16,7 +23,7 @@ const TopControls = () => {
           radius="none"
           title="Reset Week"
           variant="surface"
-          onClick={() => reset()}
+          onClick={() => weekReset()}
         >
           <BiReset />
         </Button>
@@ -26,7 +33,7 @@ const TopControls = () => {
           radius="none"
           variant="soft"
           disabled={week <= 1}
-          onClick={() => decrement()}
+          onClick={() => weekDecrement()}
         >
           <AiOutlineArrowLeft />
           week {week - 1}
@@ -39,7 +46,7 @@ const TopControls = () => {
             radius="none"
             variant="soft"
             disabled={week > defautlWeek}
-            onClick={() => increment()}
+            onClick={() => weekIncrement()}
           >
             week {week + 1}
             <AiOutlineArrowRight />

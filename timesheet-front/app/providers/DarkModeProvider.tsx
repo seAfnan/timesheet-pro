@@ -17,7 +17,7 @@ interface ContextProps {
 
 export const ThemeContext = createContext<ContextProps | undefined>(undefined);
 
-const DarkModeContext = ({ children }: PropsWithChildren<{}>) => {
+const DarkModeContext = ({ children }: PropsWithChildren) => {
   const [theme, setTheme] = useState<ThemeContextType>("dark");
 
   const switchDark = () => {

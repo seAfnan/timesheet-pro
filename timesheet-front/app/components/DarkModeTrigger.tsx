@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ThemeContext } from "./DarkModeContext";
+import { ThemeContext } from "../providers/DarkModeProvider";
 import { MdBrightness4, MdBrightness7 } from "react-icons/md";
 
 const DarkModeTrigger = () => {

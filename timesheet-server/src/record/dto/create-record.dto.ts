@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsEmail,
   IsEnum,
   IsNumber,
   IsString,
@@ -8,8 +9,10 @@ import {
 } from 'class-validator';
 
 enum Status {
-  SELECTED = 'SELECTED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  WAITING_APPROVAL = 'WAITING_APPROVAL',
   CHALLENGED = 'CHALLENGED',
+  CLOSED = 'CLOSED',
 }
 
 class DetailDto {
@@ -48,6 +51,9 @@ export class CreateRecordDto {
   @IsString()
   employee: string;
 
+  @IsEmail()
+  email: string;
+
   @IsNumber()
   year: number;
 
@@ -71,9 +77,30 @@ export class CreateRecordDto {
   @IsString()
   assignee: string;
 
-  @IsString()
+  @IsEmail()
   assigneeEmail: string;
 
   @IsEnum(Status)
   status: Status;
+
+  @IsString()
+  mondayComment: string;
+
+  @IsString()
+  tuesdayComment: string;
+
+  @IsString()
+  wednesdayComment: string;
+
+  @IsString()
+  thursdayComment: string;
+
+  @IsString()
+  fridayComment: string;
+
+  @IsString()
+  saturdayComment: string;
+
+  @IsString()
+  sundayComment: string;
 }

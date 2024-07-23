@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -7,6 +7,7 @@ import {
   TextField,
   Container,
   Heading,
+  TextArea,
 } from "@radix-ui/themes";
 import { AiFillEdit } from "react-icons/ai";
 import { FaTrash } from "react-icons/fa";
@@ -15,13 +16,13 @@ import toast, { Toaster } from "react-hot-toast";
 
 type Props = {
   projectHours: {
-    mondayInp: number;
-    tuesdayInp: number;
-    wednesdayInp: number;
-    thursdayInp: number;
-    fridayInp: number;
-    saturdayInp: number;
-    sundayInp: number;
+    monday: number;
+    tuesday: number;
+    wednesday: number;
+    thursday: number;
+    friday: number;
+    saturday: number;
+    sunday: number;
     projectType: string;
     project: string;
     task: string;
@@ -37,13 +38,6 @@ const ProjectHoursList: React.FC<Props> = ({
   handleEdit,
   editIndex,
 }) => {
-  const handleSave = () => {
-    if (projectHours.length == 0) {
-      toast.error("Please add some hours");
-      return;
-    }
-  };
-
   return (
     <>
       {projectHours.map((item, index) => (
@@ -79,55 +73,67 @@ const ProjectHoursList: React.FC<Props> = ({
             <Flex direction="row" gap="1">
               <TextField.Root
                 style={{ textAlign: "center" }}
-                value={item.mondayInp}
+                value={item.monday}
                 radius="none"
                 disabled
               />
               <TextField.Root
                 style={{ textAlign: "center" }}
-                value={item.tuesdayInp}
+                value={item.tuesday}
                 radius="none"
                 disabled
               />
               <TextField.Root
                 style={{ textAlign: "center" }}
-                value={item.wednesdayInp}
+                value={item.wednesday}
                 radius="none"
                 disabled
               />
               <TextField.Root
                 style={{ textAlign: "center" }}
-                value={item.thursdayInp}
+                value={item.thursday}
                 radius="none"
                 disabled
               />
               <TextField.Root
                 style={{ textAlign: "center" }}
-                value={item.fridayInp}
+                value={item.friday}
                 radius="none"
                 disabled
               />
               <TextField.Root
                 style={{ textAlign: "center" }}
-                value={item.saturdayInp}
+                value={item.saturday}
                 radius="none"
                 disabled
               />
               <TextField.Root
-                style={{ textAlign: "center" }}
-                value={item.sundayInp}
+                style={{ textAlign: "center", border: "none" }}
+                value={item.sunday}
                 radius="none"
                 disabled
               />
               <Button
-                variant={editIndex === index ? "solid" : "outline"}
+                variant={editIndex === index ? "solid" : "soft"}
+                style={{
+                  fontSize: "12px",
+                  paddingLeft: "7px",
+                  paddingRight: "6px",
+                  marginRight: "-4px",
+                }}
+                title="Edit"
                 onClick={() => handleEdit(index)}
               >
                 <AiFillEdit />
               </Button>
               <Button
-                variant="solid"
-                color="red"
+                variant={editIndex === index ? "solid" : "soft"}
+                style={{
+                  fontSize: "12px",
+                  paddingLeft: "6px",
+                  paddingRight: "7px",
+                }}
+                title="Remove"
                 onClick={() => handleRemove(index)}
               >
                 <FaTrash />
@@ -136,80 +142,6 @@ const ProjectHoursList: React.FC<Props> = ({
           </Box>
         </Flex>
       ))}
-      {projectHours.length > 0 && (
-        <Flex gap="1" pt="2" pb="2" style={{ textAlign: "center" }}>
-          <Box
-            width="25%"
-            pt="2"
-            pb="2"
-            style={{
-              background: "var(--gray-a2)",
-              borderRadius: "var(--radius-3)",
-            }}
-          ></Box>
-          <Box
-            width="18.5%"
-            pt="2"
-            pb="2"
-            ml="1"
-            style={{
-              background: "var(--gray-a2)",
-              borderRadius: "var(--radius-3)",
-            }}
-          >
-            <Heading size="3" mb="1" weight="light">
-              hours required
-            </Heading>
-            <Text size="3" color="orange">
-              37
-            </Text>
-          </Box>
-          <Box
-            width="18.5%"
-            pt="2"
-            pb="2"
-            style={{
-              background: "var(--gray-a2)",
-              borderRadius: "var(--radius-3)",
-            }}
-          >
-            <Heading size="3" mb="1" weight="light">
-              hours committed
-            </Heading>
-            <Text size="3" color="orange">
-              40
-            </Text>
-          </Box>
-          <Box
-            width="18.5%"
-            pt="2"
-            pb="2"
-            style={{
-              background: "var(--gray-a2)",
-              borderRadius: "var(--radius-3)",
-            }}
-          >
-            <Heading size="3" mb="1" weight="light">
-              overtime
-            </Heading>
-            <Text size="3" color="crimson">
-              3
-            </Text>
-          </Box>
-          <Box width="18.5%">
-            <Button
-              style={{ width: "100%", height: "98%", fontSize: "1.5rem" }}
-              color="indigo"
-              variant="solid"
-              onClick={handleSave}
-            >
-              <BsSave style={{ marginRight: "0.5rem" }} />
-              save
-            </Button>
-          </Box>
-          <Toaster />
-        </Flex>
-      )}
     </>
   );
 };

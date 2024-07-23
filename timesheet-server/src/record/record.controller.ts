@@ -35,7 +35,7 @@ export class RecordController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRecordDto: UpdateRecordDto) {
-    return this.recordService.update(+id, updateRecordDto);
+    return this.recordService.update(id, updateRecordDto);
   }
 
   @Delete(':id')

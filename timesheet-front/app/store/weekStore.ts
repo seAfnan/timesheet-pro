@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { create } from "zustand";
 
 interface WeekStore {
@@ -7,9 +8,11 @@ interface WeekStore {
   weeksInYear: number;
   datesOfWeek: string[];
   datesOfDefaultWeek: string[];
-  increment: () => void;
-  decrement: () => void;
-  reset: () => void;
+  weekIncrement: () => void;
+  weekDecrement: () => void;
+  weekReset: () => void;
+  weekRecord: Record<string, any>;
+  updateWeekRecord: (key: string | Record<string, any>, value?: any) => void;
 }
 
 // Function to get dates of a specific week
@@ -63,6 +66,27 @@ const weeksInYear: number = Math.ceil(
   (endDate.getTime() - startDate.getTime()) / millisecondsInWeek
 );
 
+export const currentWeekRecord = {
+  employee: "",
+  employeeEmail: "",
+  year: currentYear,
+  week: currentWeek,
+  details: [],
+  committedHours: 0,
+  totalHours: 0,
+  overtime: 0,
+  assignee: "",
+  assigneeEmail: "",
+  status: "IN_PROGRESS",
+  mondayComment: "",
+  tuesdayComment: "",
+  wednesdayComment: "",
+  thursdayComment: "",
+  fridayComment: "",
+  saturdayComment: "",
+  sundayComment: "",
+};
+
 const useWeekStore = create<WeekStore>((set) => ({
   week: currentWeek,
   defautlWeek: currentWeek,
@@ -70,7 +94,7 @@ const useWeekStore = create<WeekStore>((set) => ({
   weeksInYear: weeksInYear,
   datesOfWeek: getWeekDates(currentWeek, currentYear),
   datesOfDefaultWeek: getWeekDates(currentWeek, currentYear),
-  increment: () =>
+  weekIncrement: () =>
     set((state) => {
       const newWeek = state.week + 1;
       return {
@@ -78,7 +102,7 @@ const useWeekStore = create<WeekStore>((set) => ({
         datesOfWeek: getWeekDates(newWeek, state.year),
       };
     }),
-  decrement: () =>
+  weekDecrement: () =>
     set((state) => {
       const newWeek = state.week - 1;
       return {
@@ -86,11 +110,39 @@ const useWeekStore = create<WeekStore>((set) => ({
         datesOfWeek: getWeekDates(newWeek, state.year),
       };
     }),
-  reset: () =>
+  weekReset: () =>
     set((state) => ({
       week: currentWeek,
       datesOfWeek: getWeekDates(state.defautlWeek, state.year),
     })),
+  weekRecord: currentWeekRecord,
+  // updateWeekRecord: (key: string, value: any) =>
+  //   set((state) => ({
+  //     weekRecord: {
+  //       ...state.weekRecord,
+  //       [key]: value,
+  //     },
+  //   })),
+  updateWeekRecord: (key: string | Record<string, any>, value?: any) =>
+    set((state) => {
+      if (typeof key === "object" && key !== null) {
+        // If the first argument is an object, spread its properties into the state
+        return {
+          weekRecord: {
+            ...state.weekRecord,
+            ...key,
+          },
+        };
+      } else {
+        // Otherwise, treat it as a single key-value pair
+        return {
+          weekRecord: {
+            ...state.weekRecord,
+            [key]: value,
+          },
+        };
+      }
+    }),
 }));
 
 export default useWeekStore;
